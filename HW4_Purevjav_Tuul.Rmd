@@ -1,7 +1,7 @@
 ---
 title: "HW4 Table"
 author: "Tuul Purevjav"
-date: "3/5/2022"
+date: "3/7/2022"
 output: html_document
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
@@ -9,4 +9,49 @@ knit: (function(input_file, encoding) {
  encoding=encoding,
  output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 ---
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+We're planning to move to Washington state this summer.  The approximate area we'd like to move to is in King county.  We have two school-age kids and choosing a school for them is our starting point. For this assignment I created a directory table for K-12 public schools in King County, Washington. 
+Data source is at https://geo.wa.gov/datasets/k12wa::washington-state-public-schools/about .
+
+```{r}
+# prepare the data
+datain <- read_csv("Washington_State_Public_Schools.csv")
+datain <- datain %>% 
+  select(SchoolName, GradeCategory, LowestGrade, HighestGrade, PhysicalAddress, Email, Phone, LEAName, County) 
+```
+
+
+```{r}
+# filter the data for King County
+school <- datain %>% filter(County == 'King')
+```
+
+```{r}
+# check and drop NA's
+sum(is.na(school))
+school <-na.omit(school)
+```
+My first choice was to use DT, but I wasn't able to figure out the knitting issue.  So, I used `reactable` library. It still gives nice functionalities of page scrolling and column sorting.
+```{r}
+library(reactable)
+tbl_school <- school  %>%
+  select(SchoolName, GradeCategory, LowestGrade, HighestGrade, PhysicalAddress, Email, Phone, LEAName) %>%
+  reactable(columns = list(
+    SchoolName = colDef(name = "Name"),
+    GradeCategory = colDef(name = "Grade Category"),
+    LowestGrade = colDef(name = "Lowest Grade"),
+    HighestGrade = colDef(name = "Highest Grade"),
+    PhysicalAddress = colDef(name = "Address"),
+    Email = colDef(name = "Email"),
+    Phone = colDef(name = "Phone"),
+    LEAName = colDef(name = "District")
+  ))
+tbl_school
+```
 
