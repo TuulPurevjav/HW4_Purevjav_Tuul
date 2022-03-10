@@ -18,7 +18,9 @@ library(reactable)
 ```
 
 We're planning to move to Washington state this summer.  The approximate area we'd like to move to is in King county.  We have two school-age kids and choosing a school for them is our starting point. For this assignment, I created a directory table for K-12 public schools in King County, Washington. 
-Data source is at https://geo.wa.gov/datasets/k12wa::washington-state-public-schools/about .
+The data source is at the following links:
+https://geo.wa.gov/datasets/k12wa::washington-state-public-schools/about
+https://geo.wa.gov/datasets/k12wa::washington-school-districts/about
 
 
 ```{r}
