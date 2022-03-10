@@ -17,20 +17,19 @@ library(kableExtra)
 library(reactable)
 ```
 
-We're planning to move to Washington state this summer.  The approximate area we'd like to move to is in King county.  We have two school-age kids and choosing a school for them is our starting point. For this assignment, I created a directory table for K-12 public schools in King County, Washington. 
+We're planning to move to Washington state this summer.  The approximate area we'd like to move to is in King county.  We have two school-age kids and choosing a school for them is our starting point. For this assignment, I created a directory table for K-12 public schools in King County in Washington. 
 The data source is at the following links:
 https://geo.wa.gov/datasets/k12wa::washington-state-public-schools/about
 https://geo.wa.gov/datasets/k12wa::washington-school-districts/about
 
 
 ```{r}
+# import school and district data King county
 districts <- read_csv("Washington_School_Districts.csv", show_col_types = FALSE)
 districts <- districts %>% 
   filter(County == "King") %>% 
   select(LEACode, Website) %>% 
   drop_na()
-
-# get school data on King county
 schools <- read_csv("Washington_State_Public_Schools.csv", show_col_types = FALSE)
 schools <- schools %>%
   filter(County == "King") %>%
@@ -43,6 +42,7 @@ schools <- schools %>%
 df.school.district <- merge(x=schools, y=districts, by="LEACode", all.x=TRUE)
 ```
 
+I will extract Street, City and Zip Code information from Address variable and put them into seperate columns. 
 ```{r}
 # put address and SchoolCode into one df
 df.school.address <- paste0(schools$SchoolCode, ",", schools$PhysicalAddress)
@@ -63,27 +63,27 @@ dat2[, 1] <- sapply(dat2[, 1], as.numeric)
 ```
 
 ```{r}
-# add parsed address to school
+# add parsed address back to school
 schools <- merge(x=df.school.district, y=dat2, by = "SchoolCode", all.x=TRUE)
 # remove white space from City column
 schools$City <- str_replace_all(schools$City, fixed(" "), "")
 ```
 
-My first choice for displaying the table was to use `DT` library, but I wasn't able to figure out the knitting issue.  So, I used `reactable` library instead. It still provides nice functionalities of page scrolling and column sorting.
+My first choice for displaying the table was to use `DT` library, but I wasn't able to figure out the knitting issue.  So, I used `reactable` library instead. It still provides nice functionalities of page scrolling and column sorting. The table also allows the user to search on all columns and resize Phone column to display phone numbers in one line.
 ```{r}
 tbl_school <- schools  %>%
   select(City, Zip, SchoolName, GradeCategory, LowestGrade, HighestGrade, PhysicalAddress, Phone, LEAName) %>%
   reactable(columns = list(
-    City = colDef(name = "City"),
-    Zip = colDef(name = "Zip Code"),
-    GradeCategory = colDef(name = "Grade Category"),
-    SchoolName = colDef(name = "Name"),
-    GradeCategory = colDef(name = "Grade Category"),
-    LowestGrade = colDef(name = "Lowest Grade"),
-    HighestGrade = colDef(name = "Highest Grade"),
-    PhysicalAddress = colDef(name = "Address"),
-    Phone = colDef(name = "Phone"),
-    LEAName = colDef(name = "District")
+    City = colDef(name = "City", filterable = TRUE),
+    Zip = colDef(name = "Zip Code", filterable = TRUE),
+    GradeCategory = colDef(name = "Grade Category", filterable = TRUE),
+    SchoolName = colDef(name = "Name", filterable = TRUE),
+    GradeCategory = colDef(name = "Grade Category", filterable = TRUE),
+    LowestGrade = colDef(name = "Lowest Grade", filterable = TRUE),
+    HighestGrade = colDef(name = "Highest Grade", filterable = TRUE),
+    PhysicalAddress = colDef(name = "Address", filterable = TRUE),
+    Phone = colDef(name = "Phone", resizable = TRUE, filterable = TRUE),
+    LEAName = colDef(name = "District", filterable = TRUE)
   ))
 tbl_school
 ```
