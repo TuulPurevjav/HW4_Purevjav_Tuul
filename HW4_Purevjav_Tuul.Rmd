@@ -24,7 +24,7 @@ https://geo.wa.gov/datasets/k12wa::washington-school-districts/about
 
 
 ```{r}
-# import school and district data King county
+# import King county school and district data
 districts <- read_csv("Washington_School_Districts.csv", show_col_types = FALSE)
 districts <- districts %>% 
   filter(County == "King") %>% 
